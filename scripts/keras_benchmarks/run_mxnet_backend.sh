@@ -10,8 +10,9 @@ echo -e "Running tests with the following config:\n$(cat ~/.keras/keras.json)"
 # config file.
 #models='cifar10_cnn gru lstm mnist_mlp resnet50 vgg16 xception'
 models='resnet50'
+dir=`pwd`
 for name in $models
 do
-  python benchmarks/scripts/keras_benchmarks/run_benchmark.py  --mode="$1" --model_name="$name" --dry_run=True
+  python $dir/run_benchmark.py  --pwd=$dir --mode="$1" --model_name="$name" --dry_run=True
 done
 #!/usr/bin/env bash
