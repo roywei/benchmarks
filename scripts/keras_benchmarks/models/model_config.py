@@ -7,6 +7,7 @@ from models import resnet50_benchmark_eager
 from models import resnet50_benchmark_subclass
 from models import vgg16_benchmark
 from models import xception_benchmark
+from models import resnet50_benchmark_tf_keras
 
 def get_model_config(model_name):
   if model_name == 'cifar10_cnn':
@@ -35,4 +36,7 @@ def get_model_config(model_name):
 
   if model_name == 'resnet50_subclass':
     return resnet50_benchmark_subclass.Resnet50SubclassBenchmark()
+
+  if model_name == 'resnet50_tf_keras':
+    return resnet50_benchmark_tf_keras.Resnet50Benchmark()
 
