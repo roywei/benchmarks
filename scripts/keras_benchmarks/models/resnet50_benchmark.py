@@ -70,7 +70,7 @@ class Resnet50Benchmark:
         inputs = keras.layers.Input(shape=input_shape[1:])
         outputs = keras.applications.ResNet50(include_top=False,
                                               pooling='avg',
-                                              weights=None)(inputs)
+                                              weights=None, input_shape=input_shape[1:])(inputs)
         predictions = keras.layers.Dense(num_classes)(outputs)
         model = keras.models.Model(inputs, predictions)
         if gpus > 1:
