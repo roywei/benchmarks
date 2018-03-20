@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Keras Tensorflow Backend
+# Keras MXNet Backend
 python -c "from keras import backend"
-KERAS_BACKEND=tensorflow
+KERAS_BACKEND=mxnet
 sed -i -e 's/"backend":[[:space:]]*"[^"]*/"backend":\ "'$KERAS_BACKEND'/g' ~/.keras/keras.json;
 echo -e "Running tests with the following config:\n$(cat ~/.keras/keras.json)"
 
@@ -10,8 +10,8 @@ echo -e "Running tests with the following config:\n$(cat ~/.keras/keras.json)"
 # config file.
 #models='cifar10_cnn gru lstm mnist_mlp resnet50 vgg16 xception'
 models='resnet50'
-dir=`pwd`
 for name in $models
 do
-  python $dir/run_benchmark.py  --pwd=$dir --mode="$1" --model_name="$name" --dry_run=True
+  python benchmarks/scripts/keras_benchmarks/run_benchmark.py  --mode="$1" --model_name="$name" --dry_run=True
 done
+#!/usr/bin/env bash

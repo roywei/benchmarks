@@ -4,7 +4,7 @@ import argparse
 import json
 import keras
 
-import upload_benchmarks_bq as bq
+#import upload_benchmarks_bq as bq
 from models import model_config
 
 if keras.backend.backend() == "tensorflow":
@@ -13,8 +13,12 @@ if keras.backend.backend() == "theano":
   import theano
 if keras.backend.backend() == "cntk":
   import cntk
+if keras.backend.backend() == "mxnet":
+  import mxnet
 
 parser = argparse.ArgumentParser()
+parser.add_argument('--pwd',
+                    help='The benchmark scripts dir')
 parser.add_argument('--mode',
                     help='The benchmark can be run on cpu, gpu and multiple gpus.')
 parser.add_argument('--model_name',
@@ -29,7 +33,7 @@ args = parser.parse_args()
 
 # Load the json config file for the requested mode.
 # TODO(anjalisridhar): Can we set the benchmarks home dir? Lets add that as an argument that is part of our setup script
-config_file = open("benchmarks/scripts/keras_benchmarks/config.json", 'r')
+config_file = open(args.pwd + "/config.json", 'r')
 config_contents = config_file.read()
 config = json.loads(config_contents)[args.mode]
 
@@ -40,8 +44,10 @@ def get_backend_version():
         return theano.__version__
     if keras.backend.backend() == "cntk":
         return cntk.__version__
+    if keras.backend.backend() == "mxnet":
+        return mxnet.__version__
     return "undefined"
-
+"""
 def _upload_metrics(current_model):
     bq.upload_metrics_to_bq(test_name=current_model.test_name,
                             total_time=current_model.total_time,
@@ -60,13 +66,14 @@ def _upload_metrics(current_model):
                             sample_type=current_model.sample_type,
                             test_type=current_model.test_type)
 
+"""
 
 model = model_config.get_model_config(args.model_name)
 #if keras.backend.backend() == 'tensorflow':
 #  use_dataset_tensors=True
 use_dataset_tensors=False
-model.run_benchmark(gpus=config['gpus'], use_dataset_tensors=use_dataset_tensors)
+model.run_benchmark(gpus=config['gpus'],use_dataset_tensors=use_dataset_tensors)
 if args.dry_run == True:
   print("Model :total_time", model.test_name, model.total_time)
-else:
-  _upload_metrics(model)
+#else:
+#  _upload_metrics(model)

@@ -25,6 +25,24 @@
     "platform_machine_type": "n1-standard-16",
     "gpus": 4,
     "gpu_platform": "NVIDIA Tesla K80"
+  },
+  "multi_gpu_config_aws": {
+    "cpu_num_cores": 32,
+    "cpu_memory": 244,
+    "cpu_memory_info": "GB",
+    "platform_type": "AWS",
+    "platform_machine_type": "p3.8xlarge",
+    "gpus": 4,
+    "gpu_platform": "NVIDIA Tesla V100"
+  },
+  "cpu_config_mac": {
+    "cpu_num_cores": 2,
+    "cpu_memory": 16,
+    "cpu_memory_info": "GB",
+    "platform_type": "Mac",
+    "platform_machine_type": "MackBook Pro",
+    "gpus": 0,
+    "gpu_platform": "None"
   }
 }
 
