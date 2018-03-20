@@ -80,7 +80,7 @@ class Resnet50Benchmark:
         if keras.backend. backend() == "mxnet" and gpus > 0:
             gpu_list = []
             for i in range(gpus):
-                gpu_list.append("gpu(${0})",i)
+                gpu_list.append("gpu(%d)" % i)
             print("training on gpu list: ", gpu_list)
             model .compile(loss='categorical_crossentropy',
                       optimizer=keras.optimizers.RMSprop(lr=0.0001, decay=1e-6),
