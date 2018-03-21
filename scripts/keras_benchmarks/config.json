@@ -26,6 +26,24 @@
     "gpus": 4,
     "gpu_platform": "NVIDIA Tesla K80"
   },
+  "cpu_config_aws": {
+    "cpu_num_cores": 32,
+    "cpu_memory": 244,
+    "cpu_memory_info": "GB",
+    "platform_type": "AWS",
+    "platform_machine_type": "p3.8xlarge",
+    "gpus": 0,
+    "gpu_platform": "NVIDIA Tesla V100"
+  },
+   "gpu_config_aws": {
+    "cpu_num_cores": 32,
+    "cpu_memory": 244,
+    "cpu_memory_info": "GB",
+    "platform_type": "AWS",
+    "platform_machine_type": "p3.8xlarge",
+    "gpus": 1,
+    "gpu_platform": "NVIDIA Tesla V100"
+  },
   "multi_gpu_config_aws": {
     "cpu_num_cores": 32,
     "cpu_memory": 244,

@@ -97,6 +97,7 @@ class Resnet50Benchmark:
                   shuffle=True, callbacks=[time_callback])
 
         self.total_time = 0
+        print(time_callback.times)
         for i in range(1, self.epochs):
             self.total_time += time_callback.times[i]
 

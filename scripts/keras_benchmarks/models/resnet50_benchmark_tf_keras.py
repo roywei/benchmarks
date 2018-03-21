@@ -39,7 +39,7 @@ class Resnet50Benchmark:
         self.sample_type = "images"
         self.total_time = 0
         self.batch_size = 32
-        self.epochs = 4
+        self.epochs = 20
         self.num_samples = 1000
         self.test_type = 'tf.keras, eager_mode'
 
@@ -84,11 +84,12 @@ class Resnet50Benchmark:
                       shuffle=True, callbacks=[time_callback])
 
             self.total_time = 0
+            print(time_callback.times)
             for i in range(1, self.epochs):
                 self.total_time += time_callback.times[i]
 
         # experiment
-        # """"""
+        """
         with tf.device('/gpu:0'):
             # model = tf.keras.applications.ResNet50(weights=None)
             inputs = tf.keras.layers.Input(shape=(3, 256, 256))
@@ -136,6 +137,7 @@ class Resnet50Benchmark:
             self.total_time = 0
             for i in range(1, self.epochs):
                 self.total_time += time_callback.times[i]
+        """
 
         if tf.keras.backend.backend() == "tensorflow":
             tf.keras.backend.clear_session()
