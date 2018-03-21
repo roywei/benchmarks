@@ -1,0 +1,4 @@
+.idea
+*pyc
+scripts/keras_benchmarks/__pycache__/
+scripts/keras_benchmarks/models/__pycache__/
