@@ -68,28 +68,30 @@ class Resnet50Benchmark:
         device, data_format = device_and_data_format()
         print(device)
         print(data_format)
-        with tf.device(device):
-            # model = tf.keras.applications.ResNet50(weights=None)
-            inputs = tf.keras.layers.Input(shape=(3, 256, 256))
-            outputs = tf.keras.applications.ResNet50(include_top=False,
-                                                     pooling='avg',
-                                                     weights=None)(inputs)
-            predictions = tf.keras.layers.Dense(num_classes)(outputs)
-            model = tf.keras.models.Model(inputs, predictions)
-            model.compile(loss='categorical_crossentropy',
-                          optimizer=tf.train.RMSPropOptimizer(learning_rate=0.0001, decay=1e-6),
-                          metrics=['accuracy'])
 
-            time_callback = timehistory.TimeHistory()
+        # model = tf.keras.applications.ResNet50(weights=None)
+        inputs = tf.keras.layers.Input(shape=(3, 256, 256))
+        outputs = tf.keras.applications.ResNet50(include_top=False,
+                                                 pooling='avg',
+                                                 weights=None)(inputs)
+        predictions = tf.keras.layers.Dense(num_classes)(outputs)
+        model = tf.keras.models.Model(inputs, predictions)
+        if tf.keras.backend.backend() == "tensorflow" and gpus > 1:
+            model = tf.keras.utils.multi_gpu_model(model, gpus=gpus)
+        model.compile(loss='categorical_crossentropy',
+                      optimizer=tf.train.RMSPropOptimizer(learning_rate=0.0001, decay=1e-6),
+                      metrics=['accuracy'])
 
-            model.fit(x_train, y_train, batch_size=self.batch_size, epochs=self.epochs,
-                      shuffle=True, callbacks=[time_callback])
+        time_callback = timehistory.TimeHistory()
 
-            self.total_time = 0
-            for i in range(1, self.epochs):
-                self.total_time += time_callback.times[i]
+        model.fit(x_train, y_train, batch_size=self.batch_size, epochs=self.epochs,
+                  shuffle=True, callbacks=[time_callback])
 
-        if tf.keras.backend.backend() == "tensorflow":
-            tf.keras.backend.clear_session()
+        self.total_time = 0
+        for i in range(1, self.epochs):
+            self.total_time += time_callback.times[i]
+
+    if tf.keras.backend.backend() == "tensorflow":
+        tf.keras.backend.clear_session()
 
 
