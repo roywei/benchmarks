@@ -74,20 +74,11 @@ class Resnet50Benchmark:
         predictions = keras.layers.Dense(num_classes)(outputs)
         model = keras.models.Model(inputs, predictions)
         # use multi gpu model for more than 1 gpu
-        if keras.backend.backend() == "tensorflow" and gpus > 1:
+        if keras.backend.backend() == "tensorflow" or keras.backend.backend() == "mxnet" and gpus > 1:
             model = keras.utils.multi_gpu_model(model, gpus=gpus)
-        # specify context if using gpu mode in mxnet
-        if keras.backend. backend() == "mxnet" and gpus > 0:
-            gpu_list = []
-            for i in range(gpus):
-                gpu_list.append("gpu(%d)" % i)
-            print("training on gpu list: ", gpu_list)
-            model .compile(loss='categorical_crossentropy',
+
+        model.compile(loss='categorical_crossentropy',
                       optimizer=keras.optimizers.RMSprop(lr=0.0001),
-                      metrics=['accuracy'], context = gpu_list)
-        else:
-            model.compile(loss='categorical_crossentropy',
-                      optimizer=keras.optimizers.RMSprop(lr=0.0001, decay=1e-6),
                       metrics=['accuracy'])
 
 
