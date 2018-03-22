@@ -83,7 +83,7 @@ class Resnet50Benchmark:
                 gpu_list.append("gpu(%d)" % i)
             print("training on gpu list: ", gpu_list)
             model .compile(loss='categorical_crossentropy',
-                      optimizer=keras.optimizers.RMSprop(lr=0.0001, decay=1e-6),
+                      optimizer=keras.optimizers.RMSprop(lr=0.0001),
                       metrics=['accuracy'], context = gpu_list)
         else:
             model.compile(loss='categorical_crossentropy',

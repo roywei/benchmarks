@@ -77,7 +77,7 @@ class Resnet50Benchmark:
             predictions = tf.keras.layers.Dense(num_classes)(outputs)
             model = tf.keras.models.Model(inputs, predictions)
             model.compile(loss='categorical_crossentropy',
-                          optimizer=tf.train.RMSPropOptimizer(learning_rate=0.0001, decay=1e-6),
+                          optimizer=tf.train.RMSPropOptimizer(learning_rate=0.0001),
                           metrics=['accuracy'])
             time_callback = timehistory.TimeHistory()
             model.fit(x_train, y_train, batch_size=self.batch_size, epochs=self.epochs,
