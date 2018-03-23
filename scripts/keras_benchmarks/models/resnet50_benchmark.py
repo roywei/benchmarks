@@ -18,6 +18,7 @@ if keras.backend.backend() == 'cntk':
     from gpu_mode import cntk_gpu_mode_config, finalize
 #import tensorflow.contrib.eager as tfe
 import numpy as np
+import time
 
 def crossentropy_from_logits(y_true, y_pred):
     return keras.backend.categorical_crossentropy(target=y_true,
@@ -39,7 +40,7 @@ class Resnet50Benchmark:
         self.num_samples = 1000
         self.test_type = 'tf.keras, eager_mode'
 
-    def run_benchmark(self, gpus=0, use_dataset_tensors=False):
+    def run_benchmark(self, gpus=0, inference=False, use_dataset_tensors=False):
         print("Running model ", self.test_name)
         #tfe.enable_eager_execution()
         keras.backend.set_learning_phase(True)
@@ -74,23 +75,34 @@ class Resnet50Benchmark:
         predictions = keras.layers.Dense(num_classes)(outputs)
         model = keras.models.Model(inputs, predictions)
         # use multi gpu model for more than 1 gpu
-        if keras.backend.backend() == "tensorflow" or keras.backend.backend() == "mxnet" and gpus > 1:
+        if (keras.backend.backend() == "tensorflow" or keras.backend.backend() == "mxnet" ) and gpus > 1:
             model = keras.utils.multi_gpu_model(model, gpus=gpus)
 
-        model.compile(loss='categorical_crossentropy',
-                      optimizer=keras.optimizers.RMSprop(lr=0.0001),
-                      metrics=['accuracy'])
+        if inference:
+            times = []
+            i = 0
+            while(i + 32 < len(x_train)):
+                start = time.time()
+                model.predict(x_train[i:i+32])
+                times.append(time.time() - start)
+                i += 32
+            print(times)
+
+        else:
+            model.compile(loss='categorical_crossentropy',
+                          optimizer=keras.optimizers.RMSprop(lr=0.0001),
+                          metrics=['accuracy'])
 
 
-        time_callback = timehistory.TimeHistory()
-        batch_size = self.batch_size*gpus if gpus >0 else self.batch_size
-        model.fit(x_train, y_train, batch_size=batch_size, epochs=self.epochs,
-                  shuffle=True, callbacks=[time_callback])
+            time_callback = timehistory.TimeHistory()
+            batch_size = self.batch_size*gpus if gpus >0 else self.batch_size
+            model.fit(x_train, y_train, batch_size=batch_size, epochs=self.epochs,
+                      shuffle=True, callbacks=[time_callback])
 
-        self.total_time = 0
-        print(time_callback.times)
-        for i in range(1, self.epochs):
-            self.total_time += time_callback.times[i]
+            self.total_time = 0
+            print(time_callback.times)
+            for i in range(1, self.epochs):
+                self.total_time += time_callback.times[i]
 
         #if tf.keras.backend.backend() == "tensorflow":
         #  tf.keras.backend.clear_session()

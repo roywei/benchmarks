@@ -3,7 +3,7 @@
 import argparse
 import json
 import keras
-
+import sys
 #import upload_benchmarks_bq as bq
 from models import model_config
 
@@ -19,6 +19,8 @@ if keras.backend.backend() == "mxnet":
 parser = argparse.ArgumentParser()
 parser.add_argument('--pwd',
                     help='The benchmark scripts dir')
+parser.add_argument('--inference',
+                    help='Benchmark inference only, use True or False')
 parser.add_argument('--mode',
                     help='The benchmark can be run on cpu, gpu and multiple gpus.')
 parser.add_argument('--model_name',
@@ -30,6 +32,15 @@ parser.add_argument('--dry_run', type=bool,
                          'corruption.')
 
 args = parser.parse_args()
+
+inference = False
+if args.inference:
+    if args.inference not in ['True', 'False']:
+        print('inference only accept True or False as parameter')
+        sys.exit()
+
+    if args.inference == 'True':
+        inference = True
 
 # Load the json config file for the requested mode.
 # TODO(anjalisridhar): Can we set the benchmarks home dir? Lets add that as an argument that is part of our setup script
@@ -72,7 +83,7 @@ model = model_config.get_model_config(args.model_name)
 #if keras.backend.backend() == 'tensorflow':
 #  use_dataset_tensors=True
 use_dataset_tensors=False
-model.run_benchmark(gpus=config['gpus'],use_dataset_tensors=use_dataset_tensors)
+model.run_benchmark(gpus=config['gpus'], inference=inference, use_dataset_tensors=use_dataset_tensors)
 if args.dry_run == True:
   print("Model :total_time", model.test_name, model.total_time)
 #else:
